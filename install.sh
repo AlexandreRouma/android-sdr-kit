@@ -3,7 +3,7 @@ set -e
 # Settings
 export ANDROID_INSTALLER=commandlinetools-linux-8512546_latest.zip
 export ANDROID_API_LEVEL=28
-export ANDROID_NDK_VERSION=23.0.7599858
+export ANDROID_NDK_VERSION=25.1.8937393
 export SDR_KIT_ROOT=/root/sdr
 export SDR_KIT_OUT=/root/sdr-out
 

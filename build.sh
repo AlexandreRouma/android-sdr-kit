@@ -79,20 +79,20 @@ build_fftw x86_64
 build_fftw armeabi-v7a
 build_fftw arm64-v8a
 
-# Build codec2
-build_codec2() { # [android_abi]
-    echo "===================== Codec2 ($1) ====================="
-    cd codec2
-    mkdir -p build_$1 && cd build_$1
-    cmake $(gen_cmake_args $1) ..
-    make $MAKEOPTS
-    make DESTDIR=$SDR_KIT_OUT/$1 install
-    cd ../../
-}
-build_codec2 x86
-build_codec2 x86_64
-build_codec2 armeabi-v7a
-build_codec2 arm64-v8a
+# # Build codec2
+# build_codec2() { # [android_abi]
+#     echo "===================== Codec2 ($1) ====================="
+#     cd codec2
+#     mkdir -p build_$1 && cd build_$1
+#     cmake $(gen_cmake_args $1) ..
+#     make $MAKEOPTS
+#     make DESTDIR=$SDR_KIT_OUT/$1 install
+#     cd ../../
+# }
+# build_codec2 x86
+# build_codec2 x86_64
+# build_codec2 armeabi-v7a
+# build_codec2 arm64-v8a
 
 # Build libusb
 build_libusb() {
