@@ -18,15 +18,17 @@ gen_cmake_args() { # [android_abi]
 }
 
 gen_cmake_libusb_args() { # [android_abi]
-    echo -DLIBUSB_LIBRARIES=$SDR_KIT_OUT/$1/lib/libusb1.0.so -DLIBUSB_INCLUDE_DIRS=$SDR_KIT_OUT/$1/include -DLIBUSB_INCLUDE_DIR=$SDR_KIT_OUT/$1/include -DLIBUSB_FOUND=1 -DLIBUSB_VERSION=1.0.25
+    echo -DLIBUSB_LIBRARIES=$SDR_KIT_ROOT/$1/lib/libusb1.0.so -DLIBUSB_INCLUDE_DIRS=$SDR_KIT_ROOT/$1/include -DLIBUSB_INCLUDE_DIR=$SDR_KIT_ROOT/$1/include -DLIBUSB_FOUND=1 -DLIBUSB_VERSION=1.0.25
 }
 
 gen_cmake_fftw_args() { # [android_abi]
-    echo -DFFTW_LIBRARIES=$SDR_KIT_OUT/$1/lib/libfftw3f.so -DFFTW_INCLUDES=$SDR_KIT_OUT/$1/include -DFFTW_FOUND=1
+    echo -DFFTW_LIBRARIES=$SDR_KIT_ROOT/$1/lib/libfftw3f.so -DFFTW_INCLUDES=$SDR_KIT_ROOT/$1/include -DFFTW_FOUND=1
 }
 
 # Download libaries
-git clone https://github.com/facebook/zstd
+wget https://github.com/facebook/zstd/releases/download/v1.5.2/zstd-1.5.2.tar.gz
+tar -zxvf zstd-1.5.2.tar.gz
+mv zstd-1.5.2 zstd
 
 wget http://www.fftw.org/fftw-3.3.10.tar.gz
 tar -zxvf fftw-3.3.10.tar.gz
@@ -36,7 +38,9 @@ wget https://github.com/drowe67/codec2/archive/refs/tags/v1.0.5.zip
 7z x v1.0.5.zip
 mv codec2-1.0.5 codec2
 
-git clone https://github.com/libusb/libusb
+wget https://github.com/libusb/libusb/releases/download/v1.0.25/libusb-1.0.25.tar.bz2
+tar -xvf libusb-1.0.25.tar.bz2
+mv libusb-1.0.25 libusb
 
 git clone --recurse-submodules https://github.com/gnuradio/volk
 
@@ -55,8 +59,8 @@ build_zstd() { # [arch] [android_abi] [compiler_abi]
     load_android_toolchain $1 $3
     make clean
     make $MAKEOPTS
-    make prefix=/ libdir=/lib DESTDIR=$SDR_KIT_OUT/$2 install
-    patchelf --set-soname libzstd.so $SDR_KIT_OUT/$2/lib/libzstd.so
+    make prefix=/ libdir=/lib DESTDIR=$SDR_KIT_ROOT/$2 install
+    patchelf --set-soname libzstd.so $SDR_KIT_ROOT/$2/lib/libzstd.so
     cd ..
 }
 build_zstd i686 x86
@@ -71,7 +75,7 @@ build_fftw() { # [android_abi]
     mkdir -p build_$1 && cd build_$1
     cmake $(gen_cmake_args $1) -DENABLE_FLOAT=ON ..
     make $MAKEOPTS
-    make DESTDIR=$SDR_KIT_OUT/$1 install
+    make DESTDIR=$SDR_KIT_ROOT/$1 install
     cd ../../
 }
 build_fftw x86
@@ -86,7 +90,7 @@ build_fftw arm64-v8a
 #     mkdir -p build_$1 && cd build_$1
 #     cmake $(gen_cmake_args $1) ..
 #     make $MAKEOPTS
-#     make DESTDIR=$SDR_KIT_OUT/$1 install
+#     make DESTDIR=$SDR_KIT_ROOT/$1 install
 #     cd ../../
 # }
 # build_codec2 x86
@@ -100,27 +104,27 @@ build_libusb() {
     cd libusb/android/jni
     $ANDROID_SDK_ROOT/ndk/$ANDROID_NDK_VERSION/ndk-build
     cd ..
-    mkdir -p $SDR_KIT_OUT/x86/lib
-    mkdir -p $SDR_KIT_OUT/x86_64/lib
-    mkdir -p $SDR_KIT_OUT/armeabi-v7a/lib
-    mkdir -p $SDR_KIT_OUT/arm64-v8a/lib
-    cp libs/x86/* $SDR_KIT_OUT/x86/lib
-    cp libs/x86_64/* $SDR_KIT_OUT/x86_64/lib
-    cp libs/armeabi-v7a/* $SDR_KIT_OUT/armeabi-v7a/lib
-    cp libs/arm64-v8a/* $SDR_KIT_OUT/arm64-v8a/lib
+    mkdir -p $SDR_KIT_ROOT/x86/lib
+    mkdir -p $SDR_KIT_ROOT/x86_64/lib
+    mkdir -p $SDR_KIT_ROOT/armeabi-v7a/lib
+    mkdir -p $SDR_KIT_ROOT/arm64-v8a/lib
+    cp libs/x86/* $SDR_KIT_ROOT/x86/lib
+    cp libs/x86_64/* $SDR_KIT_ROOT/x86_64/lib
+    cp libs/armeabi-v7a/* $SDR_KIT_ROOT/armeabi-v7a/lib
+    cp libs/arm64-v8a/* $SDR_KIT_ROOT/arm64-v8a/lib
     cd ..
-    mkdir -p $SDR_KIT_OUT/x86/include
-    mkdir -p $SDR_KIT_OUT/x86_64/include
-    mkdir -p $SDR_KIT_OUT/armeabi-v7a/include
-    mkdir -p $SDR_KIT_OUT/arm64-v8a/include
-    cp libusb/libusb.h $SDR_KIT_OUT/x86/include
-    cp libusb/libusbi.h $SDR_KIT_OUT/x86/include
-    cp libusb/libusb.h $SDR_KIT_OUT/x86_64/include
-    cp libusb/libusbi.h $SDR_KIT_OUT/x86_64/include
-    cp libusb/libusb.h $SDR_KIT_OUT/armeabi-v7a/include
-    cp libusb/libusbi.h $SDR_KIT_OUT/armeabi-v7a/include
-    cp libusb/libusb.h $SDR_KIT_OUT/arm64-v8a/include
-    cp libusb/libusbi.h $SDR_KIT_OUT/arm64-v8a/include
+    mkdir -p $SDR_KIT_ROOT/x86/include
+    mkdir -p $SDR_KIT_ROOT/x86_64/include
+    mkdir -p $SDR_KIT_ROOT/armeabi-v7a/include
+    mkdir -p $SDR_KIT_ROOT/arm64-v8a/include
+    cp libusb/libusb.h $SDR_KIT_ROOT/x86/include
+    cp libusb/libusbi.h $SDR_KIT_ROOT/x86/include
+    cp libusb/libusb.h $SDR_KIT_ROOT/x86_64/include
+    cp libusb/libusbi.h $SDR_KIT_ROOT/x86_64/include
+    cp libusb/libusb.h $SDR_KIT_ROOT/armeabi-v7a/include
+    cp libusb/libusbi.h $SDR_KIT_ROOT/armeabi-v7a/include
+    cp libusb/libusb.h $SDR_KIT_ROOT/arm64-v8a/include
+    cp libusb/libusbi.h $SDR_KIT_ROOT/arm64-v8a/include
     cd ..
 }
 build_libusb
@@ -132,7 +136,7 @@ build_volk() { # [android_abi]
     mkdir -p build_$1 && cd build_$1
     cmake $(gen_cmake_args $1) ..
     make $MAKEOPTS
-    make DESTDIR=$SDR_KIT_OUT/$1 install
+    make DESTDIR=$SDR_KIT_ROOT/$1 install
     cd ../../
 }
 build_volk x86
@@ -147,7 +151,7 @@ build_libairspyhf() { # [android_abi]
     mkdir -p build_$1 && cd build_$1
     cmake $(gen_cmake_args $1) $(gen_cmake_libusb_args $1) ..
     make $MAKEOPTS
-    make DESTDIR=$SDR_KIT_OUT/$1 install
+    make DESTDIR=$SDR_KIT_ROOT/$1 install
     cd ../../
 }
 build_libairspyhf x86
@@ -162,7 +166,7 @@ build_libairspy() { # [android_abi]
     mkdir -p build_$1 && cd build_$1
     cmake $(gen_cmake_args $1) $(gen_cmake_libusb_args $1) ..
     make $MAKEOPTS
-    make DESTDIR=$SDR_KIT_OUT/$1 install
+    make DESTDIR=$SDR_KIT_ROOT/$1 install
     cd ../../
 }
 build_libairspy x86
@@ -177,7 +181,7 @@ build_libhackrf() { # [android_abi]
     mkdir -p build_$1 && cd build_$1
     cmake $(gen_cmake_args $1) $(gen_cmake_libusb_args $1) $(gen_cmake_fftw_args $1) ..
     make $MAKEOPTS
-    make DESTDIR=$SDR_KIT_OUT/$1 install
+    make DESTDIR=$SDR_KIT_ROOT/$1 install
     cd ../../../
 }
 build_libhackrf x86
@@ -192,7 +196,7 @@ build_librtlsdr() { # [android_abi]
     mkdir -p build_$1 && cd build_$1
     cmake $(gen_cmake_args $1) $(gen_cmake_libusb_args $1) ..
     make $MAKEOPTS
-    make DESTDIR=$SDR_KIT_OUT/$1 install
+    make DESTDIR=$SDR_KIT_ROOT/$1 install
     cd ../../
 }
 build_librtlsdr x86

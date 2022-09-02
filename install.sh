@@ -4,8 +4,10 @@ set -e
 export ANDROID_INSTALLER=commandlinetools-linux-8512546_latest.zip
 export ANDROID_API_LEVEL=28
 export ANDROID_NDK_VERSION=25.1.8937393
-export SDR_KIT_ROOT=/root/sdr
-export SDR_KIT_OUT=/root/sdr-out
+export ANDROID_CMAKE_VERSION=3.18.1
+export GRADLE_VERSION=7.3.3
+export SDR_KIT_BUILD=/root/sdr-kit-build
+export SDR_KIT_ROOT=/sdr-kit
 
 # Install dependencies
 apt update -y
@@ -20,15 +22,27 @@ export ANDROID_HOME=/root/Android
 export ANDROID_SDK_ROOT=/root/Android
 
 # Install the SDK and NDK
-yes | $ANDROID_HOME/cmdline-tools/bin/sdkmanager --sdk_root=$ANDROID_HOME --install "platforms;android-$ANDROID_API_LEVEL" "ndk;$ANDROID_NDK_VERSION"
+yes | $ANDROID_HOME/cmdline-tools/bin/sdkmanager --sdk_root=$ANDROID_HOME --install "platforms;android-$ANDROID_API_LEVEL" "ndk;$ANDROID_NDK_VERSION" "cmake;$ANDROID_CMAKE_VERSION"
 export ANDROID_NDK_TOOLCHAIN=$ANDROID_HOME/ndk/$ANDROID_NDK_VERSION/toolchains/llvm/prebuilt/linux-x86_64/bin
 export ANDROID_NDK_CMAKE=$ANDROID_HOME/ndk/$ANDROID_NDK_VERSION/build/cmake/android.toolchain.cmake
 
+# Install gradle
+mkdir -p /opt/gradle/
+wget https://services.gradle.org/distributions/gradle-$GRADLE_VERSION-bin.zip
+7z x gradle-$GRADLE_VERSION-bin.zip
+cp -r gradle-$GRADLE_VERSION /opt/gradle/
+echo "export GRADLE_HOME=/opt/gradle/gradle-$GRADLE_VERSION" >> /etc/profile
+echo "export PATH=\$GRADLE_HOME/bin:\$PATH" >> /etc/profile
+
 # Create directories
+mkdir -p $SDR_KIT_BUILD
 mkdir -p $SDR_KIT_ROOT
-mkdir -p $SDR_KIT_OUT
+echo "export SDR_KIT_ROOT=$SDR_KIT_ROOT" >> /etc/profile
 
 # Do build
-cd $SDR_KIT_ROOT
+cd $SDR_KIT_BUILD
 chmod +x /root/build.sh
 /root/build.sh
+
+# Setup environment variables at launch
+echo "export ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT" >> /etc/profile
