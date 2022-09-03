@@ -13,11 +13,11 @@ jobs:
           run: cd $GITHUB_WORKSPACE && docker build --tag android-sdr-kit .
 
         - name: Package binaries
-          run: docker run --name build android-sdr-kit /root/package.sh
+          run: docker run --name build android-sdr-kit /bin/bash -l -c "cd /root && ./package.sh"
 
         - name: Recover binaries
           working-directory: ${{runner.workspace}}
-          run: docker cp build:/android-sdr-kit.tar.gz ./
+          run: docker cp build:/root/android-sdr-kit.tar.gz ./
 
         - name: Save Deb Archive
           uses: actions/upload-artifact@v2
