@@ -44,9 +44,9 @@ mv libusb-1.0.25 libusb
 
 git clone --recurse-submodules https://github.com/gnuradio/volk
 
-git clone https://github.com/AlexandreRouma/airspyhf
+git clone https://github.com/airspy/airspyhf
 
-git clone https://github.com/AlexandreRouma/airspyone_host
+git clone https://github.com/airspy/airspyone_host
 
 git clone https://github.com/AlexandreRouma/hackrf
 
@@ -179,7 +179,7 @@ build_libhackrf() { # [android_abi]
     echo "===================== libhackrf ($1) ====================="
     cd hackrf/host
     mkdir -p build_$1 && cd build_$1
-    cmake $(gen_cmake_args $1) $(gen_cmake_libusb_args $1) $(gen_cmake_fftw_args $1) ..
+    cmake $(gen_cmake_args $1) $(gen_cmake_libusb_args $1) $(gen_cmake_fftw_args $1) -DDISABLE_USB_ENUMERATION=ON ..
     make $MAKEOPTS
     make DESTDIR=$SDR_KIT_ROOT/$1 install
     cd ../../../
