@@ -12,15 +12,15 @@ jobs:
         - name: Build
           run: cd $GITHUB_WORKSPACE && docker build --tag android-sdr-kit .
 
-        # - name: Instantiate container
-        #   run: docker run --name temp android-sdr-kit 
+        - name: Package binaries
+          run: docker run --name build android-sdr-kit /root/package.sh
 
-        # - name: Recover binaries
-        #   working-directory: ${{runner.workspace}}
-        #   run: docker cp build:/root/SDRPlusPlus/sdrpp_debian_amd64.deb ./
+        - name: Recover binaries
+          working-directory: ${{runner.workspace}}
+          run: docker cp build:/android-sdr-kit.tar.gz ./
 
-        # - name: Save Deb Archive
-        #   uses: actions/upload-artifact@v2
-        #   with:
-        #       name: sdr_kit
-        #       path: ${{runner.workspace}}/sdrpp_debian_amd64.deb
+        - name: Save Deb Archive
+          uses: actions/upload-artifact@v2
+          with:
+              name: android-sdr-kit
+              path: ${{runner.workspace}}/android-sdr-kit.tar.gz
