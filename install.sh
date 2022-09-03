@@ -8,6 +8,7 @@ export ANDROID_CMAKE_VERSION=3.18.1
 export GRADLE_VERSION=7.3.3
 export SDR_KIT_BUILD=/root/sdr-kit-build
 export SDR_KIT_ROOT=/sdr-kit
+export MAKEOPTS=-j$(nproc)
 
 # Install dependencies
 apt update -y

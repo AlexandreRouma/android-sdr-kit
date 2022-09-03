@@ -1,0 +1,26 @@
+name: Build Binaries
+
+on: [push, pull_request]
+
+jobs:
+    build_debian_buster:
+        runs-on: ubuntu-latest
+
+        steps:
+        - uses: actions/checkout@v2
+        
+        - name: Build
+          run: cd $GITHUB_WORKSPACE && docker build --tag android-sdr-kit .
+
+        # - name: Instantiate container
+        #   run: docker run --name temp android-sdr-kit 
+
+        # - name: Recover binaries
+        #   working-directory: ${{runner.workspace}}
+        #   run: docker cp build:/root/SDRPlusPlus/sdrpp_debian_amd64.deb ./
+
+        # - name: Save Deb Archive
+        #   uses: actions/upload-artifact@v2
+        #   with:
+        #       name: sdr_kit
+        #       path: ${{runner.workspace}}/sdrpp_debian_amd64.deb
