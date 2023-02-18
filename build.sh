@@ -8,6 +8,13 @@ load_android_toolchain() { # [arch] [compiler_abi]
     export AS="$ANDROID_NDK_TOOLCHAIN/$1-linux-android$2$ANDROID_API_LEVEL-as"
 }
 
+load_native_toolchain() { # [arch] [compiler_abi]
+    export LD="ld"
+    export CC="gcc"
+    export CXX="g++"
+    export AS="as"
+}
+
 gen_cmake_args() { # [android_abi]
     echo -DENABLE_TESTING=OFF -DCMAKE_TOOLCHAIN_FILE="$ANDROID_NDK_CMAKE" -DANDROID_ABI=$1 -DANDROID_ARM_NEON=ON -DANDROID_NATIVE_API_LEVEL=$ANDROID_API_LEVEL -DENABLE_TESTING=OFF -DCMAKE_INSTALL_PREFIX=/ \
         -DCMAKE_INSTALL_LIBDIR=/lib -DCMAKE_INSTALL_FULL_LIBDIR=/lib \
@@ -83,20 +90,21 @@ build_fftw x86_64
 build_fftw armeabi-v7a
 build_fftw arm64-v8a
 
-# # Build codec2
-# build_codec2() { # [android_abi]
-#     echo "===================== Codec2 ($1) ====================="
-#     cd codec2
-#     mkdir -p build_$1 && cd build_$1
-#     cmake $(gen_cmake_args $1) ..
-#     make $MAKEOPTS
-#     make DESTDIR=$SDR_KIT_ROOT/$1 install
-#     cd ../../
-# }
-# build_codec2 x86
-# build_codec2 x86_64
-# build_codec2 armeabi-v7a
-# build_codec2 arm64-v8a
+# Build codec2
+build_codec2() { # [android_abi]
+    echo "===================== Codec2 ($1) ====================="
+    cd codec2
+    mkdir -p build_$1 && cd build_$1
+    load_native_toolchain
+    cmake $(gen_cmake_args $1) -DUNITTEST=FALSE -DGENERATE_CODEBOOK=$SDR_KIT_BUILD/codec2/build_linux/src/generate_codebook ..
+    make $MAKEOPTS
+    make DESTDIR=$SDR_KIT_ROOT/$1 install
+    cd ../../
+}
+build_codec2 x86
+build_codec2 x86_64
+build_codec2 armeabi-v7a
+build_codec2 arm64-v8a
 
 # Build libusb
 build_libusb() {
