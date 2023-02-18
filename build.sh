@@ -32,6 +32,14 @@ gen_cmake_fftw_args() { # [android_abi]
     echo -DFFTW_LIBRARIES=$SDR_KIT_ROOT/$1/lib/libfftw3f.so -DFFTW_INCLUDES=$SDR_KIT_ROOT/$1/include -DFFTW_FOUND=1
 }
 
+gen_cmake_libxml2_args() { # [android_abi]
+    echo -DLIBXML2_LIBRARY=$SDR_KIT_ROOT/$1/lib/libxml2.so -DLIBXML2_INCLUDE_DIR=$SDR_KIT_ROOT/$1/include/libxml2 -DLIBXML2_FOUND=1
+}
+
+gen_cmake_libiio_args() { # [android_abi]
+    echo -DLIBIIO_LIBRARIES=$SDR_KIT_ROOT/$1/lib/libiio.so -DLIBIIO_INCLUDEDIR=$SDR_KIT_ROOT/$1/include
+}
+
 # Download libaries
 wget https://github.com/facebook/zstd/releases/download/v1.5.2/zstd-1.5.2.tar.gz
 tar -zxvf zstd-1.5.2.tar.gz
@@ -58,6 +66,18 @@ git clone https://github.com/airspy/airspyone_host
 git clone https://github.com/AlexandreRouma/hackrf
 
 git clone https://github.com/AlexandreRouma/librtlsdr
+
+wget https://download.gnome.org/sources/libxml2/2.9/libxml2-2.9.14.tar.xz
+tar -xvf libxml2-2.9.14.tar.xz
+mv libxml2-2.9.14 libxml2
+
+wget https://github.com/analogdevicesinc/libiio/archive/refs/tags/v0.24.tar.gz
+tar -zxvf v0.24.tar.gz
+mv libiio-0.24 libiio
+
+wget https://github.com/analogdevicesinc/libad9361-iio/archive/refs/tags/v0.2.tar.gz
+tar -zxvf v0.2.tar.gz
+mv libad9361-iio-0.2 libad9361
 
 # Build ZSTD
 build_zstd() { # [arch] [android_abi] [compiler_abi]
@@ -211,3 +231,50 @@ build_librtlsdr x86
 build_librtlsdr x86_64
 build_librtlsdr armeabi-v7a
 build_librtlsdr arm64-v8a
+
+# Build libxml2
+build_libxml2() { # [android_abi]
+    echo "===================== LibXML2 ($1) ====================="
+    cd libxml2
+    mkdir -p build_$1 && cd build_$1
+    cmake $(gen_cmake_args $1) -DLIBXML2_WITH_LZMA=OFF -DLIBXML2_WITH_PYTHON=OFF ..
+    make $MAKEOPTS
+    make DESTDIR=$SDR_KIT_ROOT/$1 install
+    cd ../../
+}
+build_libxml2 x86
+build_libxml2 x86_64
+build_libxml2 armeabi-v7a
+build_libxml2 arm64-v8a
+
+# Build libiio
+build_libiio() { # [android_abi]
+    echo "===================== LibIIO ($1) ====================="
+    cd libiio
+    mkdir -p build_$1 && cd build_$1
+    cmake $(gen_cmake_args $1) $(gen_cmake_libxml2_args $1) -DWITH_TESTS=OFF -DWITH_USB_BACKEND=OFF -DHAVE_DNS_SD=OFF ..
+    make $MAKEOPTS
+    make DESTDIR=$SDR_KIT_ROOT/$1 install
+    cd ../../
+}
+build_libiio x86
+build_libiio x86_64
+build_libiio armeabi-v7a
+build_libiio arm64-v8a
+
+# Build libad9361
+build_libad9361() { # [android_abi]
+    echo "===================== LibAD9361 ($1) ====================="
+    cd libad9361
+    mkdir -p build_$1 && cd build_$1
+    cmake $(gen_cmake_args $1) $(gen_cmake_libiio_args $1) -DDESTINATION=$SDR_KIT_ROOT/$1 ..
+    make $MAKEOPTS
+    # Install is broken, so it must be done manually...
+    cp ../ad9361.h $SDR_KIT_ROOT/$1/include/
+    cp libad9361.so $SDR_KIT_ROOT/$1/lib/
+    cd ../../
+}
+build_libad9361 x86
+build_libad9361 x86_64
+build_libad9361 armeabi-v7a
+build_libad9361 arm64-v8a
