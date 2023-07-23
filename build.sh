@@ -51,7 +51,7 @@ mv fftw-3.3.10 fftw
 
 wget https://github.com/drowe67/codec2-dev/archive/refs/tags/v1.0.5.zip
 7z x v1.0.5.zip
-mv codec2-1.0.5 codec2
+mv codec2-dev-1.0.5 codec2
 
 wget https://github.com/libusb/libusb/releases/download/v1.0.25/libusb-1.0.25.tar.bz2
 tar -xvf libusb-1.0.25.tar.bz2
