@@ -49,7 +49,7 @@ wget http://www.fftw.org/fftw-3.3.10.tar.gz
 tar -zxvf fftw-3.3.10.tar.gz
 mv fftw-3.3.10 fftw
 
-wget https://github.com/drowe67/codec2/archive/refs/tags/v1.0.5.zip
+wget https://github.com/drowe67/codec2-dev/archive/refs/tags/v1.0.5.zip
 7z x v1.0.5.zip
 mv codec2-1.0.5 codec2
 
