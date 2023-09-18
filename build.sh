@@ -65,7 +65,7 @@ git clone https://github.com/airspy/airspyone_host
 
 git clone https://github.com/AlexandreRouma/hackrf
 
-git clone https://github.com/AlexandreRouma/librtlsdr
+git clone https://github.com/rtlsdrblog/rtl-sdr-blog
 
 wget https://download.gnome.org/sources/libxml2/2.9/libxml2-2.9.14.tar.xz
 tar -xvf libxml2-2.9.14.tar.xz
