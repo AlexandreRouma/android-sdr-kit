@@ -65,7 +65,7 @@ git clone https://github.com/airspy/airspyone_host
 
 git clone https://github.com/AlexandreRouma/hackrf
 
-git clone https://github.com/AlexandreRouma/librtlsdr
+git clone https://github.com/AlexandreRouma/rtl-sdr
 
 wget https://download.gnome.org/sources/libxml2/2.9/libxml2-2.9.14.tar.xz
 tar -xvf libxml2-2.9.14.tar.xz
@@ -220,7 +220,7 @@ build_libhackrf arm64-v8a
 # Build librtlsdr
 build_librtlsdr() { # [android_abi]
     echo "===================== librtlsdr ($1) ====================="
-    cd librtlsdr
+    cd rtl-sdr
     mkdir -p build_$1 && cd build_$1
     cmake $(gen_cmake_args $1) $(gen_cmake_libusb_args $1) ..
     make $MAKEOPTS
