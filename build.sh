@@ -222,7 +222,7 @@ build_librtlsdr() { # [android_abi]
     echo "===================== librtlsdr ($1) ====================="
     cd rtl-sdr
     mkdir -p build_$1 && cd build_$1
-    cmake $(gen_cmake_args $1) $(gen_cmake_libusb_args $1) ..
+    cmake $(gen_cmake_args $1) $(gen_cmake_libusb_args $1) -DBUILD_UTILITIES=OFF ..
     make $MAKEOPTS
     make DESTDIR=$SDR_KIT_ROOT/$1 install
     cd ../../
