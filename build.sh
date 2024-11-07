@@ -67,7 +67,7 @@ git clone https://github.com/AlexandreRouma/hackrf
 
 git clone https://github.com/AlexandreRouma/rtl-sdr
 
-wget https://download.gnome.org/sources/libxml2/2.9/libxml2-2.9.14.tar.xz
+wget https://www.sdrpp.org/libxml2-2.9.14.tar.xz
 tar -xvf libxml2-2.9.14.tar.xz
 mv libxml2-2.9.14 libxml2
 
