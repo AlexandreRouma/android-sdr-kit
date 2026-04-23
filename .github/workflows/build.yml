@@ -1,6 +1,6 @@
 name: Build Binaries
 
-on: [push, pull_request]
+on: [push, pull_request, workflow_dispatch]
 
 jobs:
     build_debian_buster:
@@ -20,7 +20,7 @@ jobs:
           run: docker cp build:/root/android-sdr-kit.tar.gz ./
 
         - name: Save Deb Archive
-          uses: actions/upload-artifact@v2
+          uses: actions/upload-artifact@v4
           with:
               name: android-sdr-kit
               path: ${{runner.workspace}}/android-sdr-kit.tar.gz
